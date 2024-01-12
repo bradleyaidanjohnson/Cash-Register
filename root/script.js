@@ -27,13 +27,13 @@ const changeAvailable = (change) => {
   } else {
     let changedLoop = true;
     let changeToPay = change;
-    while (changedLoop || changeToPay > 0) {
+    while (changedLoop && changeToPay > 0) {
       changedLoop = false;
       block:
         for (let i = cid.length - 1; i > -1; i--) {
-          console.log(changeDescriptions[cid[i][0]][0]);
+          /* console.log(changeDescriptions[cid[i][0]][0]);
           console.log(changeToPay);
-          console.log(cid[i][1]);
+          console.log(cid[i][1]); */
           if (Math.round(changeDescriptions[cid[i][0]][0] * 100) <= Math.round(changeToPay * 100) && Math.round(cid[i][1] * 100) > 0) {
             changeToPay -= changeDescriptions[cid[i][0]][0];
             cid[i][1] = parseFloat((cid[i][1] - changeDescriptions[cid[i][0]][0]).toFixed(2));
@@ -50,12 +50,12 @@ const changeAvailable = (change) => {
   return true;
 }
 
-const changeDetails = () => {
+const changeDetails = (change) => {
   let changeString = "";
   const reversedCid = cid.reverse();
   reversedCid.forEach((element) => {
-    if (changeDescriptions[element[0]][1] > 0) {
-      changeString += `${element[0]}: $${changeDescriptions[element[0]][1]} `
+    if (changeDescriptions[element[0]][0] <= parseFloat((change).toFixed(2))) {
+      changeString += `${element[0]}: $${parseFloat((changeDescriptions[element[0]][1]).toFixed(2))} `
     }
   })
   changeString = changeString.slice(0, -1);
@@ -77,9 +77,9 @@ purchaseButton.addEventListener("click", () => {
     if (!changeAvailable(change)) {
       changeDue.innerText = "Status: INSUFFICIENT_FUNDS";
     } else if (cashInDrawer === change) {
-      changeDue.innerText = `Status: CLOSED ${changeDetails()}`;
+      changeDue.innerText = `Status: CLOSED ${changeDetails(change)}`;
     } else {
-      changeDue.innerText = `Status: OPEN ${changeDetails()}`;
+      changeDue.innerText = `Status: OPEN ${changeDetails(change)}`;
     }
   }
 })
